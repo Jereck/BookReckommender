@@ -15,7 +15,7 @@ export default function Home() {
   const [books, setBooks] = useState<Book[]>([{ title: "", author: "", isbn: "" }])
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<{
-    recommendedBook: { title: string; author: string }
+    recommendedBook: { title: string; author: string, coverUrl: string }
     explanation: string
   } | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -44,6 +44,7 @@ export default function Home() {
     try {
       const filtered = books.filter((b) => b.isbn.trim() !== "")
       const response = await getRecommendation(filtered)
+      console.log("Response: ", response);
       setResult(response)
     } catch (err) {
       setError("Failed to get recommendation. Please try again.")
@@ -219,13 +220,25 @@ export default function Home() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="bg-white rounded-lg p-6 shadow-sm">
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{result.recommendedBook.title}</h3>
-                    <p className="text-lg text-gray-600 mb-4">by {result.recommendedBook.author}</p>
-                    <Separator className="my-4" />
+                  <div className="bg-white rounded-lg p-6 shadow-sm flex gap-6 items-start">
+                    {/* Book Cover */}
+                    {result.recommendedBook.coverUrl && (
+                      <img
+                        src={result.recommendedBook.coverUrl}
+                        alt={result.recommendedBook.title}
+                        className="w-28 h-40 object-cover rounded border shadow"
+                      />
+                    )}
+
+                    {/* Info */}
                     <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Why this book?</h4>
-                      <p className="text-gray-700 leading-relaxed">{result.explanation}</p>
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{result.recommendedBook.title}</h3>
+                      <p className="text-lg text-gray-600 mb-4">by {result.recommendedBook.author}</p>
+                      <Separator className="my-4" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-2">Why this book?</h4>
+                        <p className="text-gray-700 leading-relaxed">{result.explanation}</p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>

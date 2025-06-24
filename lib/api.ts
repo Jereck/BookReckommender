@@ -8,8 +8,9 @@ export async function getRecommendation(books: Book[]) {
   });
 
   if (!res.ok) throw new Error('Failed to get recommendation');
+  
   return res.json() as Promise<{
-    recommendedBook: { title: string; author: string };
+    recommendedBook: { title: string; author: string, coverUrl: string };
     explanation: string;
   }>;
 }
