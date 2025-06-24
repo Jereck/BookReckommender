@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Book RECKommender
 
-## Getting Started
+**Book RECKommender** is an AI-powered web app that suggests your next favorite book based on ones you already love. Simply enter a few books you've enjoyed, and our system will analyze your preferences and recommend a new title, complete with a personalized explanation and cover image.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Clerk Authentication** — Secure sign-in and session handling.
+- **Smart Book Input** — Add ISBNs with optional title/author info.
+- **OpenAI Recommendations** — Get intelligent book suggestions with explanations.
+- **Book Covers** — Visual previews of your recommended read.
+- **History Page** — Review all your past recommendations.
+- **PostgreSQL + Drizzle ORM** — Typed schema and database access.
+- **Next.js + React + Tailwind CSS** — Fast, responsive UI built with modern tools.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tech Stack
 
-## Learn More
+- **Frontend**: Next.js App Router, React, Tailwind CSS, Clerk
+- **Backend**: Node.js, TypeScript, Next.js API routes
+- **AI**: OpenAI GPT-4 (via `openai` SDK)
+- **Database**: PostgreSQL with Drizzle ORM
+- **Auth**: Clerk (JWT-based session management)
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## How It Works
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. User signs in with Clerk.
+2. Inputs a list of books (ISBNs required, titles/authors optional).
+3. Backend enriches input books with metadata via ISBNdb.
+4. A GPT-4 prompt is crafted using this data and sent to OpenAI.
+5. The response includes a recommended book, cover URL, and explanation.
+6. The result is stored and displayed to the user with visuals and reasoning.
