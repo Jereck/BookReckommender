@@ -420,13 +420,12 @@ export default function Home() {
                         <div className="flex gap-2">
                           <Button variant="outline" size="sm" asChild>
                             <a
-                              href={`https://www.google.com/search?q=${encodeURIComponent(result.recommendedBook.title + " " + result.recommendedBook.author + " book")}`}
+                              href={`https://www.amazon.com/s?k=${encodeURIComponent(result.recommendedBook.isbn || result.recommendedBook.title)}&tag=bookreckommen-20`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2"
+                              className="text-blue-600 hover:underline text-sm"
                             >
-                              <ExternalLink className="h-4 w-4" />
-                              Find Online
+                              Buy this book on Amazon
                             </a>
                           </Button>
                         </div>
