@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs"
-import { getRecommendation } from "@/lib/api"
+import { getRecommendation, getRecommendationCount } from "@/lib/api"
 import type { Book } from "@/lib/types"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,13 +12,18 @@ import { Separator } from "@/components/ui/separator"
 import { BookOpen, Plus, Sparkles, Trash2, User, Hash } from "lucide-react"
 
 export default function Home() {
-  const [books, setBooks] = useState<Book[]>([{ title: "", author: "", isbn: "" }])
+  const [books, setBooks] = useState<Book[]>([{ title: "", author: "", isbn: "", coverUrl: "" }])
+  const [recCount, setRecCount] = useState<number | null>(null);
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<{
     recommendedBook: { title: string; author: string, coverUrl: string }
     explanation: string
   } | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    getRecommendationCount().then(setRecCount).catch(() => setRecCount(null));
+  }, []);
 
   const addBook = () => {
     setBooks([...books, { title: "", author: "", isbn: "" }])
@@ -102,6 +107,11 @@ export default function Home() {
                 </CardTitle>
                 <CardDescription>
                   Add books you've enjoyed. The more books you add, the better our recommendations will be!
+                  {recCount !== null && (
+                    <div className="text-sm text-gray-500 pt-1">
+                      {recCount} of 5 free recommendations used
+                    </div>
+                  )}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">

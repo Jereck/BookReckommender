@@ -34,3 +34,10 @@
 4. A GPT-4 prompt is crafted using this data and sent to OpenAI.
 5. The response includes a recommended book, cover URL, and explanation.
 6. The result is stored and displayed to the user with visuals and reasoning.
+
+## License
+MIT — feel free to fork, modify, and build on top of it!
+
+## Credits
+Built by Jake Reck
+Powered by OpenAI, Clerk, and the community behind Next.js & Drizzle ORM.
