@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs"
-import { getRecommendation, getRecommendationCount } from "@/lib/api"
+import { getRecommendation, getRecommendationCount, retryRecommendation } from "@/lib/api"
 import { BookSearch, type SearchedBook } from "@/components/book-search"
 import type { Book } from "@/lib/types"
 import { Button } from "@/components/ui/button"
@@ -30,7 +30,7 @@ export default function Home() {
   const [recCount, setRecCount] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<{
-    recommendedBook: { title: string; author: string; coverUrl: string }
+    recommendedBook: { title: string; author: string; coverUrl: string, isbn: string }
     explanation: string
   } | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -397,47 +397,43 @@ export default function Home() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="bg-white rounded-lg p-6 shadow-sm">
-                    <div className="flex gap-6 items-start mb-4">
-                      {/* Book Cover */}
-                      {result.recommendedBook.coverUrl ? (
-                        <img
-                          src={result.recommendedBook.coverUrl || "/placeholder.svg"}
-                          alt={`Cover of ${result.recommendedBook.title}`}
-                          className="w-28 h-40 object-cover rounded border shadow flex-shrink-0"
-                        />
-                      ) : (
-                        <div className="w-28 h-40 bg-muted rounded border shadow flex items-center justify-center flex-shrink-0">
-                          <BookOpen className="h-12 w-12 text-muted-foreground" />
-                        </div>
-                      )}
-
-                      {/* Book Info */}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-2">{result.recommendedBook.title}</h3>
-                        <p className="text-lg text-gray-600 mb-4">by {result.recommendedBook.author}</p>
-
-                        <div className="flex gap-2">
-                          <Button variant="outline" size="sm" asChild>
-                            <a
-                              href={`https://www.amazon.com/s?k=${encodeURIComponent(result.recommendedBook.isbn || result.recommendedBook.title)}&tag=bookreckommen-20`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 hover:underline text-sm"
-                            >
-                              Buy this book on Amazon
-                            </a>
-                          </Button>
-                        </div>
+                  <div className="bg-white rounded-lg p-6 shadow-sm flex gap-6 items-start">
+                    {result.recommendedBook.coverUrl && (
+                      <img
+                        src={result.recommendedBook.coverUrl}
+                        alt={result.recommendedBook.title}
+                        className="w-28 h-40 object-cover rounded border shadow"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{result.recommendedBook.title}</h3>
+                      <p className="text-lg text-gray-600 mb-4">by {result.recommendedBook.author}</p>
+                      <Separator className="my-4" />
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-2">Why this book?</h4>
+                        <p className="text-gray-700 leading-relaxed">{result.explanation}</p>
                       </div>
                     </div>
+                  </div>
 
-                    <Separator className="my-4" />
-
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-2">Why this book?</h4>
-                      <p className="text-gray-700 leading-relaxed">{result.explanation}</p>
-                    </div>
+                  <div className="flex justify-end">
+                    <Button
+                      variant="outline"
+                      onClick={async () => {
+                        setLoading(true)
+                        try {
+                          const filtered = books.filter((b) => b.isbn.trim() !== "")
+                          const response = await retryRecommendation(filtered, result.recommendedBook.isbn)
+                          setResult(response)
+                        } catch (err) {
+                          setError("Failed to retry. Please try again.")
+                        } finally {
+                          setLoading(false)
+                        }
+                      }}
+                    >
+                      Try Another Recommendation
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
